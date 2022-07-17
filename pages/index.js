@@ -1,8 +1,9 @@
 import Head from "next/head";
 import Image from "next/image";
 import { createClient } from "next-sanity";
-import { PortableText } from "@portabletext/react";
 import imageUrlBuilder from "@sanity/image-url";
+import Link from "next/link";
+import TheHeader from "../components/Theheader";
 
 export default function Home({ posts }) {
   const builder = imageUrlBuilder(client);
@@ -11,13 +12,6 @@ export default function Home({ posts }) {
     return builder.image(source);
   }
 
-  const myPortableTextComponents = {
-    types: {
-      image: ({ value }) => <img src={urlFor(value).url()} />,
-    },
-  };
-
-  console.log(posts);
   return (
     <div className="text-white">
       <Head>
@@ -26,40 +20,66 @@ export default function Home({ posts }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="text-6xl text-center bg-gray-800 p-3">Posts</div>
+      <TheHeader />
 
-      <div className="max-w-5xl mx-auto">
+      <main className="my-10 max-w-6xl mx-auto grid gap-6 grid-cols-1 lg:grid-cols-2">
         {posts.map((post) => (
-          <div key={post._id} className="p-5 m-10 bg-gray-900">
-            <h3 className="text-3xl capitalize">{post.title}</h3>
-
-            {/* Description */}
-            <div className="py-5 prose prose-headings:text-white prose-p:text-white prose-blockquote:text-white prose-ul:text-white prose-li:text-white prose-ol:text-white prose-em:text-white prose-a:text-blue-600 hover:prose-a:text-blue-500 prose-a:no-underline">
-              <PortableText
-                value={post.body}
-                components={myPortableTextComponents}
+          <Link key={post._id} href={`post/${post.slug.current}`}>
+            <div className="max-w-2xl mx-auto overflow-hidden bg-gray-900 rounded-lg shadow-md">
+              <img
+                className="object-cover w-full h-64"
+                src={urlFor(post.mainImage)}
+                alt={post.title}
               />
-            </div>
 
-            {/* Cover Image */}
-            <p>Cover image:</p>
-            <img src={urlFor(post.mainImage).width(320).url()} alt="" />
+              <div className="p-6">
+                <div>
+                  {post.categories?.map((category) => (
+                    <span
+                      key={category._key}
+                      className="text-xs font-medium text-blue-600 uppercase hover:text-blue-500 cursor-pointer"
+                    >
+                      {category.name} &nbsp;
+                    </span>
+                  ))}
+                  <Link
+                    href={`post/${post.slug.current}`}
+                    className="block mt-2 text-2xl font-semibold text-gray-800 transition-colors duration-200 transform dark:text-white hover:text-gray-600 hover:underline"
+                  >
+                    {post.title}
+                  </Link>
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Beatae, mollitia. Lorem ipsum dolor sit amet consectetur
+                    adipisicing elit. Odio, dolores!
+                  </p>
+                </div>
 
-            {/* Author  */}
-            <div className="flex items-center gap-x-6">
-              <p> Author: {post.author.name} </p>
-              <p> Created:{post._createdAt} </p>
-              <div className=" relative w-12 h-12">
-                <Image
-                  src={urlFor(post.author.image).url()}
-                  layout="fill"
-                  alt=""
-                />
+                <div className="mt-4">
+                  <div className="flex items-center">
+                    <div className="flex items-center">
+                      <img
+                        className="object-cover h-10 rounded-full"
+                        src={urlFor(post.author.image)}
+                        alt={post.author.name}
+                      />
+                      <Link
+                        href="/"
+                        className="mx-2 font-semibold text-gray-700 dark:text-gray-200"
+                      >
+                        {post.author.name}
+                      </Link>
+                    </div>
+                    <span className="mx-1 text-xs text-gray-600 dark:text-gray-300">
+                      {post._createdAt}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
-      </div>
+      </main>
     </div>
   );
 }
@@ -83,6 +103,10 @@ export async function getServerSideProps() {
         name,
         image
       }, 
+    categories[] -> {
+      _key,
+      name
+    }
   }`);
 
   return {

@@ -2,8 +2,8 @@
 
 ### Frontend
 ```
-git clone url 
-cd reponame
+git https://github.com/developermithu/next-blog-with-sanity.git
+cd next-blog-with-sanity
 npm install
 npm run dev
 ```
@@ -19,3 +19,4 @@ sanity start
 - portabletext/react
 - sanity/image-url
 - tailwindcss/typography
+- react-syntax-highlighter

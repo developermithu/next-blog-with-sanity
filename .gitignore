@@ -5,6 +5,15 @@
 /.pnp
 .pnp.js
 
+# sanity-backend
+sanity-backend/node_modules
+sanity-backend/logs
+sanity-backend/*.log
+sanity-backend/coverage
+# Compiled sanity studio
+sanity-backend/dist
+
+
 # testing
 /coverage
 
